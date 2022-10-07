@@ -7,6 +7,7 @@ import java.io.Serializable;
  * @author Karsten Monteiro
  */
 public class User implements Serializable {
+    
     private String username;
     private String password;
     
@@ -21,19 +22,19 @@ public class User implements Serializable {
         this.password = password;
     }
     
-    // 'get' & 'set' methods
+    // 'get' and 'set' methods
     public String getUsername() {
-        return this.username;
+        return username;
     }
-    public void seetUsername(String newUsername) {
+    public void setUsername(String newUsername) {
         this.username = newUsername;
     }
     
     public String getPassword() {
-        return this.password;
+        return password;
     }
     public void setPassword(String newPassword) {
         this.password = newPassword;
     }
-
+    
 }

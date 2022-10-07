@@ -18,6 +18,7 @@
             Username: <input type="text" name="username" value="${username}"><br>
             Password: <input type="password" name="password" value="${password}"><br>
             <input type="submit" name="login" value="Login"><br>
+            <span>${loginMsg}</span>
         </form>
     </body>
 </html>

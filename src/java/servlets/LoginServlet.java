@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import models.AccountService;
 
 /**
  *
@@ -24,13 +25,27 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // display a login form (login.jsp) to the user that can also show messages
+        HttpSession session = request.getSession();
+        
+        String username = (String)session.getAttribute("username");
+        
+        // if the param "logout" exists, invalidate session and display logout message
+        if (request.getParameterMap().containsKey("logout")) {
+            session.invalidate();
+            request.setAttribute("loginMsg", "You have successfully logged out.");
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            
+            return;
+        }
+        
+        // redirect any previously authenticated users to the 'home'
+        if (username != null) {
+            response.sendRedirect("home");
+            
+            return;
+        }
+        
         getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
-        
-        /* doGet() responsible for logging out the user. If the parameter "logout" exists,
-         * invalidate the session and display a message that the user has successfully logged out
-        */
-        
     }
 
     /**
@@ -43,20 +58,37 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // validate that the username and password are NOT empty
-        
-        /* pass the username and passsword parameters to the login() method of a
-         * service class called AccountService.
-         * 
-         * If login() returns a non-null value, store that username in a session variable and
-         * REDIRECT (not forward) the user to the home url.
-        */
+
         HttpSession session = request.getSession();
-        /*
-         * If the authentication parameters are INVALID, display an appropriate error message,
-         * keeping the textboxes filled in with what the user has previously entered and FORWARD the user to login.jsp
-        */
+        
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        
+        // validate that the username & password are not empty
+        if (username.equals("") || password.equals("")) {
+            request.setAttribute("loginMsg", "Invalid login. One or more fields are empty.");
+            request.setAttribute("username", username);
+            request.setAttribute("password", password);
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            return;
+        }      
+        
+        // no empty fields, pass the username & password params to login()
+        AccountService validLogin = new AccountService();
+        // validate the credentials
+        if (validLogin.login(username, password) == null) {
+            request.setAttribute("loginMsg", "Invalid credentials. Please try again.");
+            request.setAttribute("username", username);
+            request.setAttribute("password", password);
+            
+            getServletContext().getRequestDispatcher("/WEB-INF/login.jsp").forward(request, response);
+            return;
+        }
+        
+        // valid login, store the username and redirect the user to '/home'
+        session.setAttribute("username", username);
+        response.sendRedirect("home");
         
     }
 }
