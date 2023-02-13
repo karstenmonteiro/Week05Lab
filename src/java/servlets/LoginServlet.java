@@ -30,7 +30,7 @@ public class LoginServlet extends HttpServlet {
         // store the value of the param, "username"
         String username = (String)session.getAttribute("username");
         
-        // logout user
+        /** LOGOUT USER **/
         if (request.getParameterMap().containsKey("logout")) {
             // invalidate session, display logout msg & return user to 'login.jsp'
             session.invalidate();
@@ -52,7 +52,7 @@ public class LoginServlet extends HttpServlet {
 
     /**
      * doPost() METHOD -- Responsible for processing the submission of the login form from 'login.jsp' and verifying that the login is valid.
-     *                    Login is VALID if: the values of "username" & "password" are not empty and the user entered valid login credentials.
+     *                    Login is VALID if: (1) the values of "username" & "password" are not empty & (2) the user entered valid login credentials.
      * 
      * @param request
      * @param response
@@ -68,7 +68,7 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        /** VERIFY LOGIN IS VALID */
+        /** LOGIN USER & VERIFY that the login is VALID */
         if (username.equals("") || password.equals("")) {
             /** INVALID LOGIN (fields cannot be empty) */
             request.setAttribute("errorMsg", "Invalid login. One or more fields are empty. Please try again.<br>");
